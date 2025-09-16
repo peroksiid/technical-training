@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Root menu shown in the app switcher -->
+    <menuitem id="estate_menu_root" name="Real Estate" sequence="10"/>
+
+    <!-- First level menu in the top bar under Real Estate -->
+    <menuitem id="estate_menu_advertisements" name="Advertisements" parent="estate_menu_root" sequence="10"/>
+
+    <!-- Action menu linking to the window action created earlier -->
+    <menuitem id="estate_menu_properties" parent="estate_menu_advertisements" action="estate_property_action" sequence="10"/>
+</odoo>
