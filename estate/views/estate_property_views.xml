@@ -46,6 +46,14 @@
                         <field name="property_type_id"/>
                         <field name="tag_ids" widget="many2many_tags"/>
                     </group>
+                    <group>
+                        <group>
+                            <field name="total_area"/>
+                        </group>
+                        <group>
+                            <field name="best_price"/>
+                        </group>
+                    </group>
                     <notebook>
                         <page string="Description">
                             <field name="description"/>
@@ -56,12 +64,16 @@
                                     <field name="price"/>
                                     <field name="partner_id"/>
                                     <field name="status"/>
+                                    <field name="validity"/>
+                                    <field name="date_deadline"/>
                                 </list>
                                 <form string="Offer">
                                     <group>
                                         <field name="price"/>
                                         <field name="partner_id"/>
                                         <field name="status"/>
+                                        <field name="validity"/>
+                                        <field name="date_deadline"/>
                                     </group>
                                 </form>
                             </field>
