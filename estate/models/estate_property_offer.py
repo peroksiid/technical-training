@@ -32,3 +32,20 @@ class EstatePropertyOffer(models.Model):
             if offer.date_deadline:
                 delta = offer.date_deadline - base_date
                 offer.validity = max(delta.days, 0)
+
+    # Make the form reactive while editing (no need to wait for save)
+    @api.onchange("validity")
+    def _onchange_validity(self):
+        for offer in self:
+            created = (offer.create_date or fields.Datetime.now())
+            base_date = created.date() if hasattr(created, "date") else date.today()
+            offer.date_deadline = base_date + timedelta(days=offer.validity or 0)
+
+    @api.onchange("date_deadline")
+    def _onchange_date_deadline(self):
+        for offer in self:
+            if offer.date_deadline:
+                created = (offer.create_date or fields.Datetime.now())
+                base_date = created.date() if hasattr(created, "date") else date.today()
+                delta = offer.date_deadline - base_date
+                offer.validity = max(delta.days, 0)
