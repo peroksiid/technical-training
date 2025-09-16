@@ -50,6 +50,22 @@
                         <page string="Description">
                             <field name="description"/>
                         </page>
+                        <page string="Offers">
+                            <field name="offer_ids" context="{'default_property_id': active_id}">
+                                <tree editable="bottom">
+                                    <field name="price"/>
+                                    <field name="partner_id"/>
+                                    <field name="status"/>
+                                </tree>
+                                <form string="Offer">
+                                    <group>
+                                        <field name="price"/>
+                                        <field name="partner_id"/>
+                                        <field name="status"/>
+                                    </group>
+                                </form>
+                            </field>
+                        </page>
                         <page string="Other Info">
                             <group>
                                 <field name="salesman_id"/>
