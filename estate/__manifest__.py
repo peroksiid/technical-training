@@ -1,11 +1,10 @@
 {
-    "name": "Estate",  # The name that will appear in the App list
-    "version": "18.0.0",  # Version
-    "application": True,  # This line says the module is an App, and not a module
-    "depends": ["base"],  # dependencies
+    "name": "Estate",
+    "version": "18.0.1.0.0",
+    "application": True,
+    "depends": ["base"],
     "data": [
-
     ],
     "installable": True,
-    'license': 'LGPL-3',
+    "license": "LGPL-3",
 }
