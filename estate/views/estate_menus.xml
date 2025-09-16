@@ -12,4 +12,5 @@
     <!-- Settings menu and child menu for property types -->
     <menuitem id="estate_menu_settings" name="Settings" parent="estate_menu_root" sequence="20"/>
     <menuitem id="estate_menu_property_types" name="Property Types" parent="estate_menu_settings" action="estate_property_type_action" sequence="10"/>
+    <menuitem id="estate_menu_property_tags" name="Property Tags" parent="estate_menu_settings" action="estate_property_tag_action" sequence="20"/>
 </odoo>

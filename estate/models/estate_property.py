@@ -64,3 +64,8 @@ class EstateProperty(models.Model):
         string="Buyer",
         copy=False,
     )
+
+    tag_ids = fields.Many2many(
+        comodel_name="estate.property.tag",
+        string="Tags",
+    )
