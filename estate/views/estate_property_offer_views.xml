@@ -19,8 +19,8 @@
             <form string="Offers">
                 <sheet>
                     <header>
-                        <button name="action_accept" type="object" string="Accept" class="btn-primary"/>
-                        <button name="action_refuse" type="object" string="Refuse" class="btn-secondary"/>
+                        <button name="action_accept" type="object" string="Accept" icon="fa-check" class="btn-primary" invisible="status == 'accepted'"/>
+                        <button name="action_refuse" type="object" string="Refuse" icon="fa-times" class="btn-secondary" invisible="status == 'refused'"/>
                     </header>
                     <group>
                         <field name="price"/>
