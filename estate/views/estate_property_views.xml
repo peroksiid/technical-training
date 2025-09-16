@@ -52,11 +52,11 @@
                         </page>
                         <page string="Offers">
                             <field name="offer_ids" context="{'default_property_id': active_id}">
-                                <tree editable="bottom">
+                                <list editable="bottom">
                                     <field name="price"/>
                                     <field name="partner_id"/>
                                     <field name="status"/>
-                                </tree>
+                                </list>
                                 <form string="Offer">
                                     <group>
                                         <field name="price"/>
