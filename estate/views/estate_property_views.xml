@@ -66,8 +66,8 @@
                             <field name="description"/>
                         </page>
                         <page string="Offers">
-                            <field name="offer_ids" context="{'default_property_id': id}">
-                                <list editable="bottom" readonly="state in ['offer_accepted','sold','cancelled']" decoration-danger="status == 'refused'" decoration-success="status == 'accepted'">
+                            <field name="offer_ids" context="{'default_property_id': id}" readonly="state in ['offer_accepted','sold','cancelled']">
+                                <list editable="bottom" decoration-danger="status == 'refused'" decoration-success="status == 'accepted'">
                                     <field name="price"/>
                                     <field name="partner_id"/>
                                     <field name="status" invisible="1"/>
