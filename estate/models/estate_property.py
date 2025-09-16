@@ -1,5 +1,6 @@
 from odoo import models, fields, api
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, ValidationError
+from odoo.tools.float_utils import float_compare, float_is_zero
 
 class EstateProperty(models.Model):
     _name = "estate.property"
@@ -139,3 +140,31 @@ class EstateProperty(models.Model):
             "The selling price must be positive.",
         ),
     ]
+
+    # Python-level validation for clearer errors in the UI
+    @api.constrains("expected_price")
+    def _check_expected_price_positive(self):
+        for record in self:
+            if record.expected_price is not None and record.expected_price <= 0:
+                raise ValidationError("The expected price must be strictly positive.")
+
+    @api.constrains("selling_price")
+    def _check_selling_price_non_negative(self):
+        for record in self:
+            if record.selling_price is not None and record.selling_price < 0:
+                raise ValidationError("The selling price must be positive.")
+
+    @api.constrains("selling_price", "expected_price")
+    def _check_selling_price_threshold(self):
+        precision = 2
+        for record in self:
+            # Skip if no selling price yet
+            if record.selling_price is None or float_is_zero(record.selling_price, precision_digits=precision):
+                continue
+            # Require a valid expected price to compare against
+            if record.expected_price is None or not float_compare(record.expected_price, 0.0, precision_digits=precision) == 1:
+                # expected price not set/invalid; other constraints will catch it
+                continue
+            min_allowed = record.expected_price * 0.9
+            if float_compare(record.selling_price, min_allowed, precision_digits=precision) == -1:
+                raise ValidationError("The selling price cannot be lower than 90% of the expected price.")
