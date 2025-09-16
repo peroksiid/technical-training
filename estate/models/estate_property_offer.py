@@ -1,4 +1,5 @@
 from odoo import models, fields, api
+from odoo.exceptions import UserError
 from datetime import date, timedelta
 
 
@@ -49,3 +50,23 @@ class EstatePropertyOffer(models.Model):
                 base_date = created.date() if hasattr(created, "date") else date.today()
                 delta = offer.date_deadline - base_date
                 offer.validity = max(delta.days, 0)
+
+    # Actions on offers
+    def action_accept(self):
+        for offer in self:
+            if offer.property_id.state == "sold":
+                raise UserError("Cannot accept an offer on a sold property.")
+            # set other offers to refused
+            siblings = offer.property_id.offer_ids - offer
+            siblings.write({"status": "refused"})
+            offer.status = "accepted"
+            offer.property_id.write({
+                "buyer_id": offer.partner_id.id,
+                "selling_price": offer.price,
+                "state": "offer_accepted",
+            })
+        return True
+
+    def action_refuse(self):
+        self.write({"status": "refused"})
+        return True

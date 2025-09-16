@@ -18,6 +18,10 @@
         <field name="arch" type="xml">
             <form string="Offers">
                 <sheet>
+                    <header>
+                        <button name="action_accept" type="object" string="Accept" class="btn-primary"/>
+                        <button name="action_refuse" type="object" string="Refuse" class="btn-secondary"/>
+                    </header>
                     <group>
                         <field name="price"/>
                         <field name="partner_id"/>
