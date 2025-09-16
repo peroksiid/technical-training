@@ -128,6 +128,11 @@ class EstateProperty(models.Model):
             record.state = "sold"
         return True
 
+    def unlink(self):
+        # Ensure related offers are removed to avoid FK violations
+        self.mapped("offer_ids").unlink()
+        return super().unlink()
+
     # SQL constraints
     _sql_constraints = [
         (
