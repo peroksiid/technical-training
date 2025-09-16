@@ -27,7 +27,7 @@
                     <notebook>
                         <page string="Properties">
                             <field name="property_ids">
-                                <list>
+                                <list decoration-success="state == 'offer_received'" decoration-bf="state == 'offer_accepted'" decoration-muted="state == 'sold'">
                                     <field name="name"/>
                                     <field name="expected_price"/>
                                     <field name="state"/>
