@@ -95,9 +95,20 @@ class EstatePropertyOffer(models.Model):
     # When an offer is created, mark the property as having an offer
     @api.model_create_multi
     def create(self, vals_list):
+        # Business rule: price must be strictly higher than any existing offer on the property
+        props = self.env["estate.property"]
+        for vals in vals_list:
+            property_id = vals.get("property_id")
+            if property_id:
+                prop = self.env["estate.property"].browse(property_id)
+                props |= prop
+                existing_max = max(prop.offer_ids.mapped("price") or [0.0])
+                if vals.get("price") is not None and vals["price"] <= existing_max:
+                    raise UserError("Offer must be higher than all existing offers for this property.")
+
         records = super().create(vals_list)
-        for offer in records:
-            prop = offer.property_id
-            if prop and prop.state in ("new", "offer_received"):
+        # Set property state to Offer Received for affected properties
+        for prop in props:
+            if prop.state in ("new", "offer_received"):
                 prop.state = "offer_received"
         return records

@@ -128,10 +128,13 @@ class EstateProperty(models.Model):
             record.state = "sold"
         return True
 
-    def unlink(self):
-        # Ensure related offers are removed to avoid FK violations
+    @api.ondelete(at_uninstall=False)
+    def _unlink_if_allowed(self):
+        for record in self:
+            if record.state not in ("new", "cancelled"):
+                raise UserError("You can only delete properties in New or Cancelled state. Consider archiving instead.")
+        # clean up children explicitly to avoid FK issues
         self.mapped("offer_ids").unlink()
-        return super().unlink()
 
     # SQL constraints
     _sql_constraints = [
