@@ -1,4 +1,4 @@
-from odoo import models, fields, api
+from odoo import api, fields, models
 from odoo.exceptions import UserError, ValidationError
 from odoo.tools.float_utils import float_compare, float_is_zero
 
@@ -79,6 +79,20 @@ class EstateProperty(models.Model):
         string="Offers",
     )
 
+    # SQL constraints
+    _sql_constraints = [
+        (
+            "expected_price_strictly_positive",
+            "CHECK(expected_price > 0)",
+            "The expected price must be strictly positive.",
+        ),
+        (
+            "selling_price_positive",
+            "CHECK(selling_price >= 0)",
+            "The selling price must be positive.",
+        ),
+    ]
+
     # Computed fields
     total_area = fields.Integer(
         string="Total Area (sqm)",
@@ -113,21 +127,7 @@ class EstateProperty(models.Model):
             self.garden_area = 0
             self.garden_orientation = False
 
-    # Actions
-    def action_cancel(self):
-        for record in self:
-            if record.state == "sold":
-                raise UserError("A sold property cannot be cancelled.")
-            record.state = "cancelled"
-        return True
-
-    def action_set_sold(self):
-        for record in self:
-            if record.state == "cancelled":
-                raise UserError("A cancelled property cannot be sold.")
-            record.state = "sold"
-        return True
-
+    # CRUD methods (ORM overrides)
     @api.ondelete(at_uninstall=False)
     def _unlink_if_allowed(self):
         for record in self:
@@ -135,20 +135,6 @@ class EstateProperty(models.Model):
                 raise UserError("You can only delete properties in New or Cancelled state. Consider archiving instead.")
         # clean up children explicitly to avoid FK issues
         self.mapped("offer_ids").unlink()
-
-    # SQL constraints
-    _sql_constraints = [
-        (
-            "expected_price_strictly_positive",
-            "CHECK(expected_price > 0)",
-            "The expected price must be strictly positive.",
-        ),
-        (
-            "selling_price_positive",
-            "CHECK(selling_price >= 0)",
-            "The selling price must be positive.",
-        ),
-    ]
 
     # Python-level validation for clearer errors in the UI
     @api.constrains("expected_price")
@@ -177,3 +163,18 @@ class EstateProperty(models.Model):
             min_allowed = record.expected_price * 0.9
             if float_compare(record.selling_price, min_allowed, precision_digits=precision) == -1:
                 raise ValidationError("The selling price cannot be lower than 90% of the expected price.")
+
+    # Action methods
+    def action_cancel(self):
+        self.ensure_one()
+        if self.state == "sold":
+            raise UserError("A sold property cannot be cancelled.")
+        self.state = "cancelled"
+        return True
+
+    def action_set_sold(self):
+        self.ensure_one()
+        if self.state == "cancelled":
+            raise UserError("A cancelled property cannot be sold.")
+        self.state = "sold"
+        return True
