@@ -91,3 +91,13 @@ class EstatePropertyOffer(models.Model):
             "The offer price must be strictly positive.",
         ),
     ]
+
+    # When an offer is created, mark the property as having an offer
+    @api.model_create_multi
+    def create(self, vals_list):
+        records = super().create(vals_list)
+        for offer in records:
+            prop = offer.property_id
+            if prop and prop.state in ("new", "offer_received"):
+                prop.state = "offer_received"
+        return records
