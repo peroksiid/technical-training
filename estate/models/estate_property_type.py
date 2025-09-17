@@ -20,4 +20,14 @@ class EstatePropertyType(models.Model):
         string="Properties",
     )
 
+    offer_ids = fields.One2many(
+        comodel_name="estate.property.offer",
+        inverse_name="property_type_id",
+        string="Offers",
+    )
+    offer_count = fields.Integer(string="Offers", compute="_compute_offer_count")
+
+    def _compute_offer_count(self):
+        for rec in self:
+            rec.offer_count = len(rec.offer_ids)
     
