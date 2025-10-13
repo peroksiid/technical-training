@@ -35,13 +35,13 @@ class EstatePropertyOffer(models.Model):
     def _compute_date_deadline(self) -> None:
         for offer in self:
             created = (offer.create_date or fields.Datetime.now())
-            base_date = created.date() if hasattr(created, "date") else date.today()
+            base_date = created.date()
             offer.date_deadline = base_date + timedelta(days=offer.validity or 0)
 
     def _inverse_date_deadline(self) -> None:
         for offer in self:
             created = (offer.create_date or fields.Datetime.now())
-            base_date = created.date() if hasattr(created, "date") else date.today()
+            base_date = created.date()
             if offer.date_deadline:
                 delta = offer.date_deadline - base_date
                 offer.validity = max(delta.days, 0)
@@ -51,7 +51,7 @@ class EstatePropertyOffer(models.Model):
     def _onchange_validity(self):
         for offer in self:
             created = (offer.create_date or fields.Datetime.now())
-            base_date = created.date() if hasattr(created, "date") else date.today()
+            base_date = created.date()
             offer.date_deadline = base_date + timedelta(days=offer.validity or 0)
 
     @api.onchange("date_deadline")
@@ -59,7 +59,7 @@ class EstatePropertyOffer(models.Model):
         for offer in self:
             if offer.date_deadline:
                 created = (offer.create_date or fields.Datetime.now())
-                base_date = created.date() if hasattr(created, "date") else date.today()
+                base_date = created.date()
                 delta = offer.date_deadline - base_date
                 offer.validity = max(delta.days, 0)
 
@@ -80,7 +80,7 @@ class EstatePropertyOffer(models.Model):
         return True
 
     def action_refuse(self):
-        self.write({"status": "refused"})
+        self.status = "refused"
         return True
 
     # SQL constraints
@@ -108,7 +108,5 @@ class EstatePropertyOffer(models.Model):
 
         records = super().create(vals_list)
         # Set property state to Offer Received for affected properties
-        for prop in props:
-            if prop.state in ("new", "offer_received"):
-                prop.state = "offer_received"
+        props.filtered(lambda p: p.state == "new").state = "offer_received"
         return records
